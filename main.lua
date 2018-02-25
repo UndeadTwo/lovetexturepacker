@@ -1,8 +1,9 @@
 function love.load(args)
 	moses = require('moses_min')
 
-	packingImage = verifyArguments(args)
+	packingImage, width = verifyArguments(args)
 	cursorImage = nil
+	
 
 	local resultingIslands = {}
 	images = {}
@@ -36,31 +37,39 @@ function verifyArguments(args)
 		error("Bad image.")
 	end
 
-	return packingImage
+	local width = tonumber(args[3]) or 1024
+
+	return packingImage, width
 end
 
 function love.draw()
 	love.graphics.setBackgroundColor(255, 128, 128, 255)
 
 	local x, y = 0, 0
+	local offsetY = 0
 	local newY = 0
 	local sprite = 1
 	local spriteLimit = #images
 	while(sprite ~= spriteLimit) do
-		love.graphics.draw(images[sprite],x,y)
-		x = x + images[sprite]:getWidth() + 1
+		love.graphics.draw(images[sprite],x,y + offsetY)
+		x = x + images[sprite]:getWidth()
 
 		if(images[sprite]:getHeight() > newY)then
 			newY = images[sprite]:getHeight()
 		end
 
-		if(x >= 800 or ((sprite + 1 <= spriteLimit) and 800 - x < images[sprite + 1]:getWidth()))then
+		if(x >= width or ((sprite + 1 <= spriteLimit) and width - x < images[sprite + 1]:getWidth()))then
 			x = 0
-			y = newY + 1
+			y = offsetY + newY
+			offsetY = y
+			y = 0
+			newY = 0
 		end
 
 		sprite = sprite + 1
 	end
+
+	love.
 end
 
 function generateIslandPixelDump(imageData, x, y)
@@ -147,7 +156,7 @@ function createImageDataFromPixelDump(pixelDump)
 end
 
 function imageDataSortingHeuristic(imageDataA, imageDataB)
-	return imageDataA:getWidth() * imageDataA:getHeight() > imageDataB:getWidth() * imageDataB:getHeight()
+	return imageDataA:getWidth() * imageDataA:getHeight() < imageDataB:getWidth() * imageDataB:getHeight()
 end
 
 function exportBitmap()
