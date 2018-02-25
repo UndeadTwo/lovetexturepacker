@@ -28,13 +28,11 @@ function love.load(args)
 
 	success, message = love.filesystem.write('export.png', fileData, fileData:getSize())
 
-	print(success, message)
-	-- love.event.quit()
-end
+	if(not success)then
+		error(message)
+	end
 
-function love.draw()
-	love.graphics.setBackgroundColor(128, 128, 128, 255)
-	love.graphics.draw(renderedResult)
+	love.event.quit()
 end
 
 function verifyArguments(args)
