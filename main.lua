@@ -4,7 +4,23 @@ function love.load(args)
 	packingImage = verifyArguments(args)
 	cursorImage = nil
 
+	local resultingIslands = {}
+	images = {}
 
+	for x = 0, packingImage:getWidth() - 1 do
+		for y = 0, packingImage:getHeight() - 1 do
+			local r,g,b,a = packingImage:getData():getPixel(x, y)
+			if(a ~= 0)then
+				table.insert(resultingIslands, createImageDataFromPixelDump(generateIslandPixelDump(packingImage:getData(), x, y)))
+			end
+		end
+	end
+
+	moses.sort(resultingIslands, imageDataSortingHeuristic)
+
+	for k,v in pairs(resultingIslands) do
+		table.insert(images, love.graphics.newImage(v))
+	end
 end
 
 function verifyArguments(args)
@@ -24,25 +40,32 @@ function verifyArguments(args)
 end
 
 function love.draw()
-	love.graphics.setBackgroundColor(128, 128, 128, 0)
-	love.graphics.draw(packingImage, 0, 0)
+	love.graphics.setBackgroundColor(255, 128, 128, 255)
 
-	if(cursorImage ~= nil)then
-		love.graphics.draw(cursorImage, love.mouse.getX(), love.mouse.getY())
+	local x, y = 0, 0
+	local newY = 0
+	local sprite = 1
+	local spriteLimit = #images
+	while(sprite ~= spriteLimit) do
+		love.graphics.draw(images[sprite],x,y)
+		x = x + images[sprite]:getWidth() + 1
+
+		if(images[sprite]:getHeight() > newY)then
+			newY = images[sprite]:getHeight()
+		end
+
+		if(x >= 800 or ((sprite + 1 <= spriteLimit) and 800 - x < images[sprite + 1]:getWidth()))then
+			x = 0
+			y = newY + 1
+		end
+
+		sprite = sprite + 1
 	end
 end
 
--- function love.mousepressed(x, y, b)
--- 	local pixDump = generateIslandPixelDump(packingImage:getData(), x, y)
-
--- 	local pixelDumpData = createImageDataFromPixelDump(pixDump)
--- 	cursorImage = love.graphics.newImage(pixelDumpData)
-
--- end
-
 function generateIslandPixelDump(imageData, x, y)
 	local r,g,b,a = imageData:getPixel(x, y)
-	local result = {{x, y, r, a}}	-- XY coords, one byte of color. Overkill considering images should be 2bit images (white, black, alpha)
+	local result = {{x, y, r, g, b, a}}
 
 	imageData:setPixel(x, y, r, g, b, 0)
 
@@ -117,20 +140,16 @@ function createImageDataFromPixelDump(pixelDump)
 	local newSprite = love.image.newImageData(width, height)
 
 	for k,v in pairs(pixelDump) do
-		newSprite:setPixel(v[1] - xOffset, v[2] - yOffset, v[3], v[3], v[3], 255)
+		newSprite:setPixel(v[1] - xOffset, v[2] - yOffset, v[3], v[4], v[5], v[6])
 	end
 
 	return newSprite
 end
 
-function exportBitmap()
-
+function imageDataSortingHeuristic(imageDataA, imageDataB)
+	return imageDataA:getWidth() * imageDataA:getHeight() > imageDataB:getWidth() * imageDataB:getHeight()
 end
 
-function makeString(...)
-  local result = ''
-  for k,v in pairs({...}) do
-    result = result .. tostring(v) .. ', '
-  end
-  return result .. '\n'
+function exportBitmap()
+
 end
