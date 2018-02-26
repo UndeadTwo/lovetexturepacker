@@ -1,9 +1,10 @@
 function love.load(args)
 	moses = require('moses_min')
+	json = require('dkjson')
+	jsonData = {}
 
 	packingImage, width = verifyArguments(args)
 	cursorImage = nil
-	
 
 	local resultingIslands = {}
 	images = {}
@@ -31,6 +32,9 @@ function love.load(args)
 	if(not success)then
 		error(message)
 	end
+
+	fileData = json.encode(jsonData)
+	success, message = love.filesystem.write('export.json', fileData, string.len(fileData))
 
 	love.event.quit()
 end
@@ -148,6 +152,7 @@ function determineRenderSheetSize()
 	local spriteLimit = #images
 	love.graphics.setCanvas(canvas)
 	while(sprite ~= spriteLimit) do
+		table.insert(jsonData, {index = sprite, x = x, y = y + offsetY, w = images[sprite]:getWidth(), h = images[sprite]:getHeight()})
 		x = x + images[sprite]:getWidth()
 
 		if(images[sprite]:getHeight() > newY)then
@@ -196,8 +201,4 @@ function renderResult(canvasWidth, canvasHeight)
 	end
 	love.graphics.setCanvas()
 	return canvas
-end
-
-function exportBitmap()
-
 end
