@@ -151,7 +151,7 @@ function determineRenderSheetSize()
 	local sprite = 1
 	local spriteLimit = #images
 	love.graphics.setCanvas(canvas)
-	while(sprite ~= spriteLimit) do
+	while(sprite <= spriteLimit) do
 		table.insert(jsonData, {index = sprite, x = x, y = y + offsetY, w = images[sprite]:getWidth(), h = images[sprite]:getHeight()})
 		x = x + images[sprite]:getWidth()
 
@@ -181,7 +181,7 @@ function renderResult(canvasWidth, canvasHeight)
 	local sprite = 1
 	local spriteLimit = #images
 	love.graphics.setCanvas(canvas)
-	while(sprite ~= spriteLimit) do
+	while(sprite <= spriteLimit) do
 		love.graphics.draw(images[sprite],x,y + offsetY)
 		x = x + images[sprite]:getWidth()
 
