@@ -63,56 +63,56 @@ function generateIslandPixelDump(imageData, x, y)
 
 	imageData:setPixel(x, y, r, g, b, 0)
 
-	if(originx ~= x + 1) then
+	if(originx ~= x + 1 and x + 1 < imageData:getWidth()) then
 		r,g,b,a = imageData:getPixel(x + 1, y)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x + 1, y))
 		end
 	end
 
-	if(originx ~= x - 1) then
+	if(originx ~= x - 1 and x - 1 >= 0) then
 		r,g,b,a = imageData:getPixel(x - 1, y)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x - 1, y))
 		end
 	end
 
-	if(originy ~= y + 1) then
+	if(originy ~= y + 1 and y + 1 < imageData:getHeight()) then
 		r,g,b,a = imageData:getPixel(x, y + 1)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x, y + 1))
 		end
 	end
 
-	if(originy ~= y - 1) then
+	if(originy ~= y - 1 and y - 1 >= 0) then
 		r,g,b,a = imageData:getPixel(x, y - 1)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x, y - 1))
 		end
 	end
 
-	if(originx ~= x + 1 and originy ~= y + 1) then
+	if(originx ~= x + 1 and originy ~= y + 1 and x + 1 < imageData:getWidth() and y + 1 < imageData:getHeight()) then
 		r,g,b,a = imageData:getPixel(x + 1, y + 1)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x + 1, y + 1))
 		end
 	end
 
-	if(originx ~= x - 1 and originy ~= x - 1) then
+	if(originx ~= x - 1 and originy ~= y - 1 and x - 1 >= 0 and y - 1 >= 0) then
 		r,g,b,a = imageData:getPixel(x - 1, y - 1)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x - 1, y - 1))
 		end
 	end
 
-	if(originy ~= y + 1 and originx ~= x - 1) then
+	if(originy ~= y + 1 and originx ~= x - 1 and x - 1 >= 0 and y + 1 < imageData:getHeight()) then
 		r,g,b,a = imageData:getPixel(x - 1, y + 1)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x - 1, y + 1))
 		end
 	end
 
-	if(originy ~= y - 1 and originx ~= x + 1) then
+	if(originy ~= y - 1 and originx ~= x + 1 and x + 1 < imageData:getWidth() and y - 1 >= 0) then
 		r,g,b,a = imageData:getPixel(x + 1, y - 1)
 		if(a ~= 0)then
 			result = moses.append(result, generateIslandPixelDump(imageData, x + 1, y - 1))
